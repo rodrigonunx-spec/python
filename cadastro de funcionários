@@ -2,7 +2,6 @@ import sqlite3
 from datetime import datetime
 agora = datetime.now()
 data_atual = agora.strftime("%d/%m/%Y")
-# funcionarios = {} # This dictionary is no longer needed as we are using the database
 
 conn = sqlite3.connect("funcionarios.db")
 cur = conn.cursor()
@@ -41,10 +40,13 @@ def adicionar_funcionario():
         return
     else:
       cargo = input("digite o cargo do funcionário: ")
-      salario = float(input("digite o salário do funcionário: "))
+      try:
+        salario = float(input("digite o salário do funcionário: "))
+      except ValueError:
+        print("o salário deve ser um número válido")
+        return
       data_admissao =(f"data de admissão: {data_atual}")
       print(data_admissao)
-      # funcionarios[nome] = {"cargo": cargo, "salario": salario, "data_admissao": data_admissao} # No longer needed
 
       conn = get_connection()
       cur = conn.cursor()
