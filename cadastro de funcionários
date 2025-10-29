@@ -1,0 +1,127 @@
+import sqlite3
+from datetime import datetime
+agora = datetime.now()
+data_atual = agora.strftime("%d/%m/%Y")
+# funcionarios = {} # This dictionary is no longer needed as we are using the database
+
+conn = sqlite3.connect("funcionarios.db")
+cur = conn.cursor()
+
+def get_connection():
+    conn = sqlite3.connect("funcionarios.db")
+    return conn
+
+def creat_table():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS funcionarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        cargo TEXT NOT NULL,
+        salario REAL NOT NULL,
+        data_admissao TEXT NOT NULL
+    );
+    """)
+    conn.commit()
+    conn.close()
+
+creat_table()
+
+def adicionar_funcionario():
+    nome = input("\ndigite o nome do funcionário: ")
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM funcionarios WHERE nome = ?", (nome,))
+    funcionario_existente = cur.fetchone()
+    conn.close()
+
+    if funcionario_existente:
+        print("funcionário já cadastrado")
+        return
+    else:
+      cargo = input("digite o cargo do funcionário: ")
+      salario = float(input("digite o salário do funcionário: "))
+      data_admissao =(f"data de admissão: {data_atual}")
+      print(data_admissao)
+      # funcionarios[nome] = {"cargo": cargo, "salario": salario, "data_admissao": data_admissao} # No longer needed
+
+      conn = get_connection()
+      cur = conn.cursor()
+      cur.execute("""
+      INSERT INTO funcionarios (nome, cargo, salario, data_admissao)
+      VALUES (?, ?, ?, ?);
+      """, (nome, cargo, salario, data_admissao))
+      conn.commit()
+      conn.close()
+      print("funcionário cadastrado com sucesso")
+
+def listar_funcionarios():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM funcionarios")
+    funcionarios = cur.fetchall()
+    conn.close()
+
+    if not funcionarios:
+        print("nenhum funcionário cadastrado")
+        return
+    else:
+      print("lista de funcionários cadastrados: \n")
+      for funcionario in funcionarios:
+        print(f"Nome: {funcionario[1]} | Cargo: {funcionario[2]} | Salário: {funcionario[3]} | {funcionario[4]}\n ")
+
+def buscar_funcionario():
+    nome = input("\ndigite o nome do funcionário: ")
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM funcionarios WHERE nome = ?", (nome,))
+    funcionario = cur.fetchone()
+    conn.close()
+
+    if not funcionario:
+        print(f"funcionário com nome '{nome}' não encontrado")
+        return
+    else:
+        print(f"Nome: {funcionario[1]} | Cargo: {funcionario[2]} | Salário: {funcionario[3]} | Data de Admissão: {funcionario[4]}\n ")
+
+
+def calculo_media_salarial():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT salario FROM funcionarios")
+    salarios = cur.fetchall()
+    conn.close()
+
+    if not salarios:
+        print("nenhum funcionário cadastrado para calcular a média salarial")
+        return
+    else:
+      print("calculando a média salarial dos funcionários: \n")
+      soma_salarios = sum([salario[0] for salario in salarios])
+      media_salario = soma_salarios / len(salarios)
+      print(f"A média salarial dos funcionários é: {media_salario:.2f}")
+      return media_salario
+
+def menu():
+    while True:
+      print("\nBem vindo ao cadastro de funcionários em python! Por favor, digite uma das opções abaixo:")
+      print("opção 1: cadastrar funcionário")
+      print("opção 2: listar funcionários")
+      print("opção 3: buscar funcionário")
+      print("opção 4: calcular média salarial dos funcionários")
+      print("opção 5: sair do cadastro")
+      opcao = input("Digite uma opção das listadas acima!: ")
+      if opcao == "1":
+        adicionar_funcionario()
+      elif opcao == "2":
+        listar_funcionarios()
+      elif opcao == "3":
+        buscar_funcionario()
+      elif opcao == "4":
+        calculo_media_salarial()
+      elif opcao == "5":
+        print("Saindo do cadastro de funcionários!")
+        print("Obrigada por utilizar nosso código!")
+        break
+menu()
