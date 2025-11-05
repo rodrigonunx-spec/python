@@ -1,0 +1,42 @@
+try:
+  import matplotlib.pyplot as plt
+except ImportError:
+  plt = None
+----------- Gráfico de linhas------------------
+dias = [1, 2, 3, 4, 5, 6, 7]
+estoque = [100, 95, 110, 105, 120, 115, 130]
+
+plt.plot(dias, estoque, color='blue')
+plt.xlabel('Dias')
+plt.ylabel('Estoque')
+plt.title('Variação do Estoque ao longo da semana')
+plt.legend(['Estoque'])
+plt.show()
+
+----------- Gráfico de barras------------------
+produto = ['Teclado', 'Mouse', 'Monitor', 'Webcam']
+quantidades = [50, 75, 30, 60]
+
+plt.bar(produto, quantidades, color='green')
+plt.xlabel('Produto')
+plt.ylabel('Quantidades')
+plt.title('Comparação entre a quantidade de produtos')
+plt.show()
+
+----------- Gráfico de pizza------------------
+categoria = ['Eletrônicos', 'Vestuário', 'Alimentos']
+valores = [15000, 8000, 5000]
+
+plt.pie(valores, labels=categoria, autopct='%1.2f%%')
+plt.title('Proporção do valor total de estoque por categoria')
+plt.show()
+
+----------- Gráfico de dispersão------------------
+precos = [50, 120, 300, 80, 20]
+estoque = [80, 25, 10, 70, 150]
+
+plt.scatter(precos, estoque, color='purple')
+plt.xlabel('Preço')
+plt.ylabel('Estoque')
+plt.title('Relação Preço-Estoque de produtos')
+plt.show()
